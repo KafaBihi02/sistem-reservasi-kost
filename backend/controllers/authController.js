@@ -28,3 +28,4 @@ export const getMe = asyncHandler(async (req, res) => {
 });
 
 export default { register, login, logout, getMe };
+
