@@ -3,8 +3,10 @@ import asyncHandler from '../utils/asyncHandler.js';
 import { sendSuccess } from '../utils/response.js';
 
 export const register = asyncHandler(async (req, res) => {
-    const data = await authService.register(req.body);
-    sendSuccess(res, data, 'Registrasi berhasil.', 201);
+    const user = await authService.register(req.body);
+    // Simpan sesi setelah registrasi
+    req.session.user = { id: user.user_id, email: user.email, role: user.role, nama: user.nama };
+    sendSuccess(res, user, 'Registrasi berhasil.', 201);
 });
 
 export const login = asyncHandler(async (req, res) => {
