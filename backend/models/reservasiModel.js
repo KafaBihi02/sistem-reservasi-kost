@@ -20,10 +20,12 @@ export const findAllByUser = async (userId) => {
     const result = await db.query(
         `SELECT r.*,
                 k.nomor_kamar, k.lantai, k.foto_kamar,
-                t.nama_tipe, t.harga_bulan, t.fasilitas
+                t.nama_tipe, t.harga_bulan, t.fasilitas,
+                pb.status AS status_pembayaran
          FROM reservasi r
          JOIN kamar k ON r.kamar_id = k.kamar_id
          LEFT JOIN tipe_kamar t ON k.tipe_id = t.tipe_id
+         LEFT JOIN pembayaran pb ON r.reservasi_id = pb.reservasi_id
          WHERE r.user_id = $1
          ORDER BY r.created_at DESC`,
         [userId]

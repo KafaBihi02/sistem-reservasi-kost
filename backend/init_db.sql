@@ -75,10 +75,6 @@ CREATE TABLE notifikasi (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Insert dummy data
-INSERT INTO users (email, password, role, status) VALUES 
-('admin@kost.com', '$2b$10$YourHashedPasswordHere', 'admin', 'aktif'),
-('user@example.com', '$2b$10$YourHashedPasswordHere', 'penyewa', 'aktif');
 
 INSERT INTO profil_penyewa (user_id, nama, no_hp) VALUES 
 (1, 'Admin Kost', '08123456789'),

@@ -8,6 +8,7 @@ export const requireAuth = (req, res, next) => {
 };
 
 export const requireAdmin = (req, res, next) => {
+    console.log('requireAdmin check:', req.session?.user);
     if (!req.session.user) {
         return next(new AppError('Silakan login terlebih dahulu.', 401));
     }

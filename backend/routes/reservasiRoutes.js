@@ -6,6 +6,6 @@ import { requireAuth, requireAdmin } from '../middlewares/authMiddleware.js';
 router.get('/', requireAuth, getAll);
 router.get('/:id', requireAuth, getById);
 router.post('/', requireAuth, create);
-router.put('/:id/status', requireAdmin, updateStatus);
+router.patch('/:id/status', requireAdmin, updateStatus);
 
 export default router;

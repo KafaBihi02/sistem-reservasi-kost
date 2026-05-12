@@ -18,6 +18,9 @@ export const getById = asyncHandler(async (req, res) => {
 });
 
 export const create = asyncHandler(async (req, res) => {
+    if (req.session.user.role === 'admin') {
+        return res.status(403).json({ success: false, message: 'Admin tidak dapat melakukan reservasi.' });
+    }
     const data = await reservasiService.create(req.session.user.id, req.body);
     sendSuccess(res, data, 'Reservasi berhasil diajukan.', 201);
 });

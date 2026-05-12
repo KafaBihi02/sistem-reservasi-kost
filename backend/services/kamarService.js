@@ -5,6 +5,10 @@ export const getAll = async () => {
     return await kamarModel.findAll();
 };
 
+export const getTrashed = async () => {
+    return await kamarModel.findAllTrashed();
+};
+
 export const getById = async (id) => {
     const data = await kamarModel.findById(id);
     if (!data) throw new AppError('Kamar tidak ditemukan.', 404);
@@ -21,8 +25,16 @@ export const update = async (id, data) => {
     return updated;
 };
 
-export const remove = async (id) => {
-    await kamarModel.remove(id);
+export const softDelete = async (id) => {
+    await kamarModel.softDelete(id);
 };
 
-export default { getAll, getById, create, update, remove };
+export const restore = async (id) => {
+    await kamarModel.restore(id);
+};
+
+export const hardDelete = async (id) => {
+    await kamarModel.hardDelete(id);
+};
+
+export default { getAll, getTrashed, getById, create, update, softDelete, restore, hardDelete };

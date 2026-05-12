@@ -4,6 +4,8 @@ import session from 'express-session';
 import dotenv from 'dotenv';
 import logger from './utils/logger.js';
 import AppError from './utils/AppError.js';
+import bcrypt from 'bcrypt';
+import pool from './config/db.js';
 
 // Routes imports
 import authRoutes from './routes/authRoutes.js';
@@ -36,11 +38,12 @@ app.use((req, res, next) => {
 
 app.use(session({
     secret: process.env.SESSION_SECRET || 'secret_kost',
-    resave: false,
+    resave: true,
     saveUninitialized: false,
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
+        sameSite: 'lax',
         maxAge: 1000 * 60 * 60 * 24  // 1 hari
     }
 }));
@@ -53,6 +56,16 @@ app.use('/api/reservasi', reservasiRoutes);
 app.use('/api/pembayaran', pembayaranRoutes);
 app.use('/api/notifikasi', notifikasiRoutes);
 app.get('/api/dashboard', requireAdmin, getDashboardStats);
+
+app.get('/api/setup-admin', async (req, res) => {
+    try {
+        const hashedAdmin = await bcrypt.hash('admin123', 10);
+        await pool.query("UPDATE users SET password = $1, role = 'admin' WHERE email = 'admin@kostku.com'", [hashedAdmin]);
+        res.json({ success: true, message: "Admin setup complete" });
+    } catch (e) {
+        res.json({ success: false, error: e.toString() });
+    }
+});
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
 app.get('/', (req, res) => {

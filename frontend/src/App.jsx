@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Auth from './pages/Auth';
 import RoomDetails from './pages/RoomDetails';
 import AdminDashboard from './pages/AdminDashboard';
+import UserDashboard from './pages/UserDashboard';
 import Rooms from './pages/Rooms';
 import './App.css';
 
@@ -61,6 +62,10 @@ function App() {
             <Route 
               path="/admin" 
               element={user && user.role === 'admin' ? <AdminDashboard /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/dashboard" 
+              element={user ? <UserDashboard user={user} /> : <Navigate to="/login" />} 
             />
             {/* Redirect any unknown route to home */}
             <Route path="*" element={<Navigate to="/" />} />

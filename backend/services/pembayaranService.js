@@ -27,7 +27,7 @@ export const updateStatus = async (id, { status }) => {
         await client.query('BEGIN');
         const updated = await pembayaranModel.updateStatus(client, id, status);
 
-        if (status === 'sukses') {
+        if (status === 'berhasil') {
             await client.query("UPDATE reservasi SET status = 'berjalan' WHERE reservasi_id = $1", [pembayaran.reservasi_id]);
         }
 

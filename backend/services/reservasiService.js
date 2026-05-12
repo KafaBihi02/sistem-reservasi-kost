@@ -32,8 +32,11 @@ export const create = async (userId, data) => {
     const tKeluar = new Date(tanggal_keluar);
     const selisihHari = Math.ceil((tKeluar - tMasuk) / (1000 * 60 * 60 * 24));
     if (selisihHari <= 0) throw new AppError('Tanggal keluar harus setelah tanggal masuk.', 400);
+    if (selisihHari < 30) throw new AppError('Minimal penyewaan adalah 30 hari (1 bulan).', 400);
 
-    const totalHarga = (selisihHari / 30) * parseFloat(kamar.harga_bulan);
+    // Flat per bulan: pembulatan ke atas (31 hari = 2 bulan, 30 hari = 1 bulan)
+    const jumlahBulan = Math.ceil(selisihHari / 30);
+    const totalHarga = jumlahBulan * parseFloat(kamar.harga_bulan);
 
     const client = await pool.connect();
     try {
@@ -75,7 +78,7 @@ export const updateStatus = async (id, { status }) => {
 
         if (status === 'dikonfirmasi') {
             await client.query("UPDATE kamar SET status = 'dipesan' WHERE kamar_id = $1", [reservasi.kamar_id]);
-        } else if (status === 'dibatalkan' || status === 'selesai') {
+        } else if (status === 'dibatalkan' || status === 'selesai' || status === 'ditolak') {
             await client.query("UPDATE kamar SET status = 'tersedia' WHERE kamar_id = $1", [reservasi.kamar_id]);
         }
 

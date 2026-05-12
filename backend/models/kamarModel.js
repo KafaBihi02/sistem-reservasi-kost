@@ -5,7 +5,19 @@ export const findAll = async () => {
         `SELECT k.*, t.nama_tipe, t.harga_bulan
          FROM kamar k
          JOIN tipe_kamar t ON k.tipe_id = t.tipe_id
+         WHERE k.deleted_at IS NULL
          ORDER BY k.nomor_kamar ASC`
+    );
+    return result.rows;
+};
+
+export const findAllTrashed = async () => {
+    const result = await db.query(
+        `SELECT k.*, t.nama_tipe, t.harga_bulan
+         FROM kamar k
+         LEFT JOIN tipe_kamar t ON k.tipe_id = t.tipe_id
+         WHERE k.deleted_at IS NOT NULL
+         ORDER BY k.deleted_at DESC`
     );
     return result.rows;
 };
@@ -42,8 +54,16 @@ export const update = async (id, { tipe_id, nomor_kamar, lantai, status, foto_ka
     return result.rows[0] || null;
 };
 
-export const remove = async (id) => {
+export const softDelete = async (id) => {
+    await db.query('UPDATE kamar SET deleted_at = CURRENT_TIMESTAMP WHERE kamar_id = $1', [id]);
+};
+
+export const restore = async (id) => {
+    await db.query('UPDATE kamar SET deleted_at = NULL WHERE kamar_id = $1', [id]);
+};
+
+export const hardDelete = async (id) => {
     await db.query('DELETE FROM kamar WHERE kamar_id = $1', [id]);
 };
 
-export default { findAll, findById, create, update, remove };
+export default { findAll, findAllTrashed, findById, create, update, softDelete, restore, hardDelete };
